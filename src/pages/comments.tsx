@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import EditIcon from '@mui/icons-material/Edit';
@@ -6,16 +6,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from "react-router-dom"
 
 
+
+
 export default function Comments() {
 
     const baseApi = 'https://jsonplaceholder.typicode.com/comments'
     const [comments, setComments] = useState<any>([])
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const getData = () => {
+        setIsLoading(true)
         axios.get(`${baseApi}`)
             .then((res) => {
                 console.log(res.data)
                 setComments([...res.data])
+                setIsLoading(false)
             })
             .catch((err) => {
                 console.log(err)
@@ -43,11 +48,15 @@ export default function Comments() {
 
     return (
         <>
-            <Box style={{ background: "linear-gradient(to right, #0b486b, #f56217)" }} className="text-center">
+            <Box style={{ background: "linear-gradient(to right, #0b486b, #f56217)", minHeight: "100vh" }} className="text-center">
                 <Typography variant="h3">COMMENTS</Typography>
                 <Button onClick={addComment} variant="contained">Add Comment</Button>
 
                 <Box className="container text-center d-flex flex-column align-items-center">
+                    {isLoading &&
+                        <Box style={{ height: "80vh" }} className="d-flex flex-column justify-content-center">
+                            <CircularProgress color="inherit" />
+                        </Box>}
                     {comments.map((x: any, i: number) => {
                         return (
                             <Box className="border rounded-pill" style={{ backgroundColor: "lightgrey", margin: 20, padding: 20, width: 800 }}>
